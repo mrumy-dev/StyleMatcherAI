@@ -43,6 +43,15 @@ let package = Package(
         
         // Image Processing
         .package(url: "https://github.com/kaishin/Gifu.git", from: "3.3.0"),
+        
+        // Backend as a Service
+        .package(url: "https://github.com/supabase-community/supabase-swift.git", from: "2.5.0"),
+        
+        // In-App Purchases and Subscriptions
+        .package(url: "https://github.com/RevenueCat/purchases-ios.git", from: "4.35.0"),
+        
+        // Image Loading and Caching (Advanced)
+        .package(url: "https://github.com/onevcat/Kingfisher.git", from: "7.10.0"),
     ],
     targets: [
         .target(
@@ -60,7 +69,10 @@ let package = Package(
                 .product(name: "Mixpanel", package: "mixpanel-swift"),
                 "AnyCodable",
                 .product(name: "KeychainSwift", package: "keychain-swift"),
-                "Gifu"
+                "Gifu",
+                .product(name: "Supabase", package: "supabase-swift"),
+                .product(name: "RevenueCat", package: "purchases-ios"),
+                "Kingfisher"
             ]
         ),
         .testTarget(
