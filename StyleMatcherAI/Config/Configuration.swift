@@ -5,6 +5,7 @@ struct Configuration {
     static let supabaseAnonKey: String = Environment.current.supabaseAnonKey
     
     static let baseURL: String = Environment.current.baseURL
+    static let openAIAPIKey: String = Environment.current.openAIAPIKey
     
     private init() {}
 }

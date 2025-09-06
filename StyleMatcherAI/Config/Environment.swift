@@ -59,6 +59,17 @@ enum Environment: String, CaseIterable {
         }
     }
     
+    var openAIAPIKey: String {
+        switch self {
+        case .development:
+            return "your-dev-openai-key"
+        case .staging:
+            return "your-staging-openai-key"
+        case .production:
+            return "your-prod-openai-key"
+        }
+    }
+    
     var isDebugMode: Bool {
         return self == .development
     }
