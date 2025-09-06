@@ -109,3 +109,4 @@ iOSInjectionProject/
 # API keys and secrets (add any config files that might contain sensitive data)
 Config/Secrets.plist
 Config/APIKeys.plist
+StyleMatcherAI/Config/APIKeys.swift
