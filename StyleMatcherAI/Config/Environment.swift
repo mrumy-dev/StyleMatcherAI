@@ -48,6 +48,17 @@ enum Environment: String, CaseIterable {
         }
     }
     
+    var supabaseAnonKey: String {
+        switch self {
+        case .development:
+            return "your-dev-anon-key"
+        case .staging:
+            return "your-staging-anon-key"
+        case .production:
+            return "your-prod-anon-key"
+        }
+    }
+    
     var isDebugMode: Bool {
         return self == .development
     }
