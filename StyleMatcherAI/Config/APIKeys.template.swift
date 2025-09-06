@@ -29,6 +29,10 @@ struct APIKeys {
         static let facebookAppId = "YOUR_FACEBOOK_APP_ID_HERE"
         static let googleClientId = "YOUR_GOOGLE_CLIENT_ID_HERE"
     }
+    
+    struct Weather {
+        static let openWeatherMapApiKey = "YOUR_OPENWEATHERMAP_API_KEY_HERE"
+    }
 }
 
 // MARK: - Instructions

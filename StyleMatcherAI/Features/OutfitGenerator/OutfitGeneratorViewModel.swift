@@ -79,7 +79,7 @@ class OutfitGeneratorViewModel: ObservableObject {
         }
     }
     
-    func generateOutfitSuggestions() async {
+    func generateOutfitSuggestions(currentWeather: CurrentWeather? = nil) async {
         guard let userId = currentUser?.id else {
             handleError(OutfitGeneratorError.userNotFound)
             return
@@ -89,9 +89,29 @@ class OutfitGeneratorViewModel: ObservableObject {
         defer { isLoading = false }
         
         do {
-            let wardrobeItems = try await wardrobeRepository.getItems(for: userId)
-            guard !wardrobeItems.isEmpty else {
+            let allWardrobeItems = try await wardrobeRepository.getItems(for: userId)
+            guard !allWardrobeItems.isEmpty else {
                 handleError(OutfitGeneratorError.emptyWardrobe)
+                return
+            }
+            
+            // Filter items based on weather if available
+            let wardrobeItems: [WardrobeItem]
+            if let weather = currentWeather {
+                wardrobeItems = WeatherClothingFilter.filterItemsForWeather(
+                    items: allWardrobeItems,
+                    weather: weather,
+                    season: Season.current
+                )
+                
+                // Update weather conditions based on actual weather
+                selectedWeatherConditions = weather.outfitConditions
+            } else {
+                wardrobeItems = allWardrobeItems
+            }
+            
+            guard !wardrobeItems.isEmpty else {
+                handleError(OutfitGeneratorError.noSuitableItems)
                 return
             }
             
@@ -100,7 +120,8 @@ class OutfitGeneratorViewModel: ObservableObject {
                 from: wardrobeItems,
                 formality: selectedFormality,
                 weather: selectedWeatherConditions,
-                occasions: selectedOccasions
+                occasions: selectedOccasions,
+                currentWeather: currentWeather
             )
             
             let scoredOutfits = OutfitScoringEngine.rankOutfits(
@@ -127,27 +148,50 @@ class OutfitGeneratorViewModel: ObservableObject {
         from items: [WardrobeItem],
         formality: FormalityLevel,
         weather: [WeatherCondition],
-        occasions: [String]
+        occasions: [String],
+        currentWeather: CurrentWeather? = nil
     ) async throws -> [Outfit] {
         let currentSeason = Season.current
         
-        let filteredItems = items.filter { item in
-            item.isAppropriateFor(formality: formality) &&
-            (item.season.isEmpty || item.season.contains(currentSeason)) &&
-            !item.isArchived
+        let filteredItems: [WardrobeItem]
+        
+        if let weather = currentWeather {
+            // Use weather-based filtering for better recommendations
+            filteredItems = items.filter { item in
+                item.isAppropriateFor(formality: formality) && !item.isArchived
+            }
+        } else {
+            filteredItems = items.filter { item in
+                item.isAppropriateFor(formality: formality) &&
+                (item.season.isEmpty || item.season.contains(currentSeason)) &&
+                !item.isArchived
+            }
         }
         
         let itemsByCategory = Dictionary(grouping: filteredItems) { $0.category }
         
+        // Get weather-based recommendations if available
+        let recommendedItems: RecommendedItems?
+        if let weather = currentWeather {
+            recommendedItems = WeatherClothingFilter.getRecommendedItemsForWeather(
+                items: filteredItems,
+                weather: weather,
+                season: currentSeason
+            )
+        } else {
+            recommendedItems = nil
+        }
+        
         var outfits: [Outfit] = []
         let maxOutfits = 50
         
-        let tops = itemsByCategory[.tops] ?? []
-        let bottoms = itemsByCategory[.bottoms] ?? []
-        let dresses = itemsByCategory[.dresses] ?? []
-        let shoes = itemsByCategory[.shoes] ?? []
-        let outerwear = itemsByCategory[.outerwear] ?? []
-        let accessories = itemsByCategory[.accessories] ?? []
+        // Use weather recommendations if available, otherwise use all items
+        let tops = recommendedItems?.tops ?? itemsByCategory[.tops] ?? []
+        let bottoms = recommendedItems?.bottoms ?? itemsByCategory[.bottoms] ?? []
+        let dresses = recommendedItems?.dresses ?? itemsByCategory[.dresses] ?? []
+        let shoes = recommendedItems?.shoes ?? itemsByCategory[.shoes] ?? []
+        let outerwear = recommendedItems?.outerwear ?? itemsByCategory[.outerwear] ?? []
+        let accessories = recommendedItems?.accessories ?? itemsByCategory[.accessories] ?? []
         
         for dress in dresses.prefix(min(dresses.count, 10)) {
             for shoe in shoes.prefix(min(shoes.count, 5)) {
@@ -314,8 +358,8 @@ class OutfitGeneratorViewModel: ObservableObject {
         await saveOutfit(outfit, rating: rating)
     }
     
-    func refreshSuggestions() async {
-        await generateOutfitSuggestions()
+    func refreshSuggestions(currentWeather: CurrentWeather? = nil) async {
+        await generateOutfitSuggestions(currentWeather: currentWeather)
     }
     
     func updateFilters(
