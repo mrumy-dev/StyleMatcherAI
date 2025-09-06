@@ -138,6 +138,11 @@ final class UserRepository: UserRepositoryProtocol {
             .execute()
     }
     
+    func getCurrentUser() async throws -> AppUser? {
+        let authUser = try await SupabaseClient.shared.auth.user
+        return try await getUser(id: authUser.id)
+    }
+    
     func getUserStats(userId: UUID) async throws -> UserStats {
         let response = try await supabase
             .rpc("get_user_stats", parameters: ["user_id": userId])

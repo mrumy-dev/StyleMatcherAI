@@ -191,26 +191,3 @@ extension Outfit {
     }
 }
 
-final class OutfitRepository {
-    private let supabase = DatabaseClient.shared.client
-    private let tableName = "outfits"
-    
-    func getOutfits(for userId: UUID) async throws -> [Outfit] {
-        return []
-    }
-    
-    func getOutfit(id: UUID) async throws -> Outfit? {
-        return nil
-    }
-    
-    func createOutfit(_ outfit: Outfit) async throws -> Outfit {
-        return outfit
-    }
-    
-    func updateOutfit(_ outfit: Outfit) async throws -> Outfit {
-        return outfit
-    }
-    
-    func deleteOutfit(id: UUID) async throws {
-    }
-}

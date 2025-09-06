@@ -9,7 +9,7 @@ struct ContentView: View {
                 showingOnboarding = false
             }
         } else {
-            MainTabView()
+            SimpleTabView()
         }
     }
 }
@@ -105,6 +105,174 @@ struct OnboardingFeature: View {
         .padding()
         .background(Color(.systemGray6))
         .cornerRadius(12)
+    }
+}
+
+struct SimpleTabView: View {
+    @State private var selectedTab = 0
+    
+    var body: some View {
+        TabView(selection: $selectedTab) {
+            SimpleHomeView()
+                .tabItem {
+                    Label("Home", systemImage: "house")
+                }
+                .tag(0)
+            
+            SimpleWardrobeView()
+                .tabItem {
+                    Label("Wardrobe", systemImage: "tshirt")
+                }
+                .tag(1)
+            
+            SimpleAddView()
+                .tabItem {
+                    Label("Add", systemImage: "plus.circle.fill")
+                }
+                .tag(2)
+            
+            SimpleOutfitsView()
+                .tabItem {
+                    Label("Outfits", systemImage: "person.2")
+                }
+                .tag(3)
+            
+            SimpleProfileView()
+                .tabItem {
+                    Label("Profile", systemImage: "person.circle")
+                }
+                .tag(4)
+        }
+    }
+}
+
+struct SimpleHomeView: View {
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 20) {
+                Image(systemName: "house.fill")
+                    .font(.system(size: 60))
+                    .foregroundColor(.blue)
+                
+                Text("Welcome to StyleMatcher AI")
+                    .font(.title)
+                    .fontWeight(.bold)
+                
+                Text("Your home for style management")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+            }
+            .padding()
+            .navigationTitle("Home")
+        }
+    }
+}
+
+struct SimpleWardrobeView: View {
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 20) {
+                Image(systemName: "tshirt.fill")
+                    .font(.system(size: 60))
+                    .foregroundColor(.purple)
+                
+                Text("My Wardrobe")
+                    .font(.title)
+                    .fontWeight(.bold)
+                
+                Text("Your clothing collection")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+            }
+            .padding()
+            .navigationTitle("Wardrobe")
+        }
+    }
+}
+
+struct SimpleAddView: View {
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 20) {
+                Image(systemName: "plus.circle.fill")
+                    .font(.system(size: 60))
+                    .foregroundColor(.green)
+                
+                Text("Add New Item")
+                    .font(.title)
+                    .fontWeight(.bold)
+                
+                Text("Scan or add clothing items")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                
+                Button("Take Photo") {
+                    // TODO: Camera functionality
+                }
+                .buttonStyle(.borderedProminent)
+                
+                Button("Choose from Library") {
+                    // TODO: Photo library
+                }
+                .buttonStyle(.bordered)
+                
+                Spacer()
+            }
+            .padding()
+            .navigationTitle("Add Item")
+        }
+    }
+}
+
+struct SimpleOutfitsView: View {
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 20) {
+                Image(systemName: "person.2.fill")
+                    .font(.system(size: 60))
+                    .foregroundColor(.orange)
+                
+                Text("My Outfits")
+                    .font(.title)
+                    .fontWeight(.bold)
+                
+                Text("Your style combinations")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+            }
+            .padding()
+            .navigationTitle("Outfits")
+        }
+    }
+}
+
+struct SimpleProfileView: View {
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 20) {
+                Image(systemName: "person.circle.fill")
+                    .font(.system(size: 60))
+                    .foregroundColor(.red)
+                
+                Text("My Profile")
+                    .font(.title)
+                    .fontWeight(.bold)
+                
+                Text("Your style preferences")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+            }
+            .padding()
+            .navigationTitle("Profile")
+        }
     }
 }
 
